@@ -1,5 +1,5 @@
 # fasta-to-gtf
-This is a script which uses a transcriptome assembly in fasta format to generate a gtf file (for use in genome/annotation visualization comparison). 
+This is a python script which uses a transcriptome assembly in fasta format to generate a gtf file (for use in genome/annotation visualization comparison). 
 It takes as input:
 1. a de novo transcriptome assembly [fasta format]
 2. a reference genome [fasta format] 
@@ -15,3 +15,8 @@ It outputs a gtf file (tab separated columns) with the following fields:
 7. strand - defined as + (forward) or - (reverse).
 8. frame - One of '0', '1' or '2'. '0' indicates that the first base of the feature is the first base of a codon, '1' that the second base is the first base of a codon, and so on..
 9. attribute - A semicolon-separated list of tag-value pairs, providing additional information about each feature.
+
+# System requirements
+* Linux OS (tested on Fedora/Scientific Linux/Ubuntu)
+* Python version 2.7
+* BLAT version 34
