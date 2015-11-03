@@ -1,10 +1,12 @@
 # fasta-to-gtf
 This is a python script which uses a transcriptome assembly in fasta format to generate a gtf file (for use in genome/annotation visualization comparison). 
-It takes as input:
+
+**It takes as input:**
+
 1. a de novo transcriptome assembly [fasta format]
 2. a reference genome [fasta format] 
 
-It outputs a gtf file (tab separated columns) with the following fields:
+**It outputs a gtf file (tab separated columns) with the following fields:**
 
 1. seqname - name of the chromosome or scaffold; chromosome names can be given with or without the 'chr' prefix. Important note: the seqname must be one used within Ensembl, i.e. a standard chromosome name or an Ensembl identifier such as a scaffold ID, without any additional content such as species or assembly. See the example GFF output below.
 2. source - name of the program that generated this feature, or the data source (database or project name)
