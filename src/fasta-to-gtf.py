@@ -82,13 +82,13 @@ def main():
 					if misMatches =="0":
 						perc_ident="100"
 					else:
-						perc_ident=str(int(misMatches)/(int(matches)+int(misMatches)))
+						perc_ident=str(100-(int(misMatches)/(int(matches)+int(misMatches))))
 
 					outfile.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (tName, "BLAT\ttranscript", tStart, tEnd, perc_ident, strand, '0', attributes))
 			
 		outfile.close()
 	blat_output.close()
-	print('fasta-to-gtf.py Says:     Finished. removing temporary files...')
+	print('fasta-to-gtf.py Says:     Finished; removing temporary files...')
 	subprocess.call(['rm','temp_output.psl'])
 if __name__ == "__main__":
 	main()
