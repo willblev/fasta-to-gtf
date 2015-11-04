@@ -53,64 +53,21 @@ def main():
 		print("Starting BLAT using transcripts from %s as queries to map to the reference genome %s ..." % (assembly,genome))
 		print("Running "+blat_command)
 
-	#blat_output_psl = subprocess.check_output([blat_command, '-1'])
+	blat_output = subprocess.check_output([blat_command, '-1'])
 
 	if verbose:
-		print 'BLAT finished; parsing output and converting to GTF...'
+		print 'BLAT finished; parsing output...'
 
-	
-	"""
-	iterator = Blat.BlatIterator(blat_output_psl)
-
-	ninput, noutput, nskipped = 0, 0, 0
-
-	gff = GTF.Entry()
-	gff.source = "psl"
-	gff.feature = "exon"
-
-	ids = {}
-
-	while 1:
-
-		if options.test and ninput >= options.test:
-			break
-
-		match = iterator.next()
-
-		if match is None:
-			break
-
-		ninput += 1
-
-		if match.mQueryId not in ids:
-			ids[match.mQueryId] = 1
-			id = match.mQueryId
-		else:
-			id = match.mQueryId + ":%i" % ids[match.mQueryId]
-			ids[match.mQueryId] += 1
-
-
-		gff.contig = match.mSbjctId
-		gff.gene_id = id
-		gff.transcript_id = id
-
-
-		if id in map_id2strand:
-			gff.strand = map_id2strand[id]
-		else:
-			gff.strand = match.strand
-
-		for qstart, sstart, size in match.getBlocks():
-
-			gff.start = sstart
-			gff.end = sstart + size
-			options.stdout.write(str(gff) + "\n")
-
-		noutput += 1
-		"""
-
-
-#did this go through?????
+	with open(output,'w') as outfile:
+		for line in blat_output:
+			if line[0].isdigit():  #checks if line is header or not
+				#blast format:
+				(matches, misMatches, repMatches, nCount, qNumInsert, qBaseInsert, tNumInsert, tBaseInsert, strand, qName, qSize, qStart, qEnd, tName, tSize, tStart, tEnd, blockCount, blockSizes, qStarts, tStarts) = line.split("\t")
+				#gtf format: seqname, source, feature, start, end, score, strand, frame, attribute (with semicolon separated stuff)
+				attributes=qName+";"+qSize
+				outfile.write("%s%s%s%s%s%s%s%s%s\n") % (tName, "BLAT", "transcript", tStart, tEnd, misMatches/(matches+misMatches), strand, 0, attributes)
+		if verbose:
+			print 'Generating GTF file...'
 
 
 if __name__ == "__main__":
