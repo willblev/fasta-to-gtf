@@ -1,9 +1,4 @@
 import subprocess, getopt, sys
-#import CGAT.Experiment as E
-#import CGAT.IOTools as IOTools
-#import CGAT.Blat as Blat
-#import CGAT.GTF as GTF
-
 	
 def usage():
 	print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n~~~~~~~fasta-to-gtf~~~~~~~\n~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -48,31 +43,36 @@ def main():
 		print('All three fields -g -a -o must be specified...')
 		sys.exit()
 
-	blat_command = "blat %s %s -t dna -q dna -tileSize 11 -minIdentity 95 -maxIntron 1001 -out psl" % (genome, assembly)
+	blat_command = "blat %s %s temp_output.psl -t=dna -q=dna -tileSize=11 -minIdentity=95 -maxIntron=1001 -out=psl" % (genome, assembly)
 	if verbose: 
 		print("Starting BLAT using transcripts from %s as queries to map to the reference genome %s ..." % (assembly,genome))
 		print("Running "+blat_command)
 
-	blat_output = subprocess.check_output([blat_command, '-1'])
-
+	#subprocess.call(['blat', genome, assembly, 'temp_output.psl', '-t=dna','-q=dna','-tileSize=11','-minIdentity=95','-maxIntron=1001','-out=psl'])
 	if verbose:
 		print 'BLAT finished; parsing output...'
+	with open('temp_output.psl','r') as blat_output:
+		with open(output,'w') as outfile:
+			if verbose:
+				print 'Generating GTF file...'
+			
+			for line in blat_output:
+				if line[0].isdigit():  #checks if line is header or not
+					#blast format:
+					(matches, misMatches, repMatches, nCount, qNumInsert, qBaseInsert, tNumInsert, tBaseInsert, strand, qName, qSize, qStart, qEnd, tName, tSize, tStart, tEnd, blockCount, blockSizes, qStarts, qStarts) = line.split()
+					#gtf format: seqname, source, feature, start, end, score, strand, frame, attribute (with semicolon separated stuff)
+					attributes=""
+					if misMatches =="0":
+						perc_ident="100"
+					else:
+						perc_ident=str(int(misMatches)/(int(matches)+int(misMatches)))
 
-	with open(output,'w') as outfile:
-		for line in blat_output:
-			if line[0].isdigit():  #checks if line is header or not
-				#blast format:
-				(matches, misMatches, repMatches, nCount, qNumInsert, qBaseInsert, tNumInsert, tBaseInsert, strand, qName, qSize, qStart, qEnd, tName, tSize, tStart, tEnd, blockCount, blockSizes, qStarts, tStarts) = line.split("\t")
-				#gtf format: seqname, source, feature, start, end, score, strand, frame, attribute (with semicolon separated stuff)
-				attributes=qName+";"+qSize
-				outfile.write("%s%s%s%s%s%s%s%s%s\n") % (tName, "BLAT", "transcript", tStart, tEnd, misMatches/(matches+misMatches), strand, 0, attributes)
-		if verbose:
-			print 'Generating GTF file...'
-
-
+					outfile.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (tName, "BLAT\ttranscript", tStart, tEnd, perc_ident, strand, '0', attributes))
+			
+		outfile.close()
+	blat_output.close()
 if __name__ == "__main__":
 	main()
     
 
 
-# blahah
