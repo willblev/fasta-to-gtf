@@ -1,4 +1,4 @@
-import subprocess, getopt, sys
+import subprocess, getopt, sys,time
 	
 def usage():
 	print("\n~~~~~~~~~~~~~~~~~~~~~~~~~~\n~~~~~~~fasta-to-gtf~~~~~~~\n~~~~~~~~~~~~~~~~~~~~~~~~~~")
@@ -18,7 +18,7 @@ def main():
 	try:
 		opts, args = getopt.getopt(sys.argv[1:], "o:g:a:hv", ["help", "verbose", "output=", "genome=", "assembly="])
 	except:
-		print 'Unable to parse arguments.'
+		print 'fasta-to-gtf.py Says:     Unable to parse arguments.'
 		usage()
 		sys.exit()
 
@@ -40,28 +40,45 @@ def main():
 		else:
 			assert False, 'Unrecognized option: known options are -v,-h,-o,-g,-a'
 	if output == None or genome==None or assembly==None:
-		print('All three fields -g -a -o must be specified...')
+		print('fasta-to-gtf.py Says:     All three fields -g -a -o must be specified...')
 		sys.exit()
 
 	blat_command = "blat %s %s temp_output.psl -t=dna -q=dna -tileSize=11 -minIdentity=95 -maxIntron=1001 -out=psl" % (genome, assembly)
 	if verbose: 
-		print("Starting BLAT using transcripts from %s as queries to map to the reference genome %s ..." % (assembly,genome))
-		print("Running "+blat_command)
+		print("fasta-to-gtf.py Says:     Starting BLAT using transcripts from %s as queries to map to the reference genome %s ..." % (assembly,genome))
+		print("fasta-to-gtf.py Says:     Running "+blat_command)
 
-	#subprocess.call(['blat', genome, assembly, 'temp_output.psl', '-t=dna','-q=dna','-tileSize=11','-minIdentity=95','-maxIntron=1001','-out=psl'])
+	subprocess.call(['blat', genome, assembly, 'temp_output.psl', '-t=dna','-q=dna','-tileSize=11','-minIdentity=95','-maxIntron=1001','-out=psl'])
 	if verbose:
-		print 'BLAT finished; parsing output...'
+		print('fasta-to-gtf.py Says:     BLAT finished; parsing output...')
 	with open('temp_output.psl','r') as blat_output:
 		with open(output,'w') as outfile:
 			if verbose:
-				print 'Generating GTF file...'
+				print 'fasta-to-gtf.py Says:     Generating GTF file...'
 			
 			for line in blat_output:
 				if line[0].isdigit():  #checks if line is header or not
 					#blast format:
-					(matches, misMatches, repMatches, nCount, qNumInsert, qBaseInsert, tNumInsert, tBaseInsert, strand, qName, qSize, qStart, qEnd, tName, tSize, tStart, tEnd, blockCount, blockSizes, qStarts, qStarts) = line.split()
+					split_line= line.split("\t")
+					matches=split_line[0]
+					misMatches=split_line[1]
+					repMatches=split_line[2] 
+					nCount=split_line[3]
+					qNumInsert=split_line[4] 
+					qBaseInsert=split_line[5] 
+					tNumInsert=split_line[6]
+					tBaseInsert=split_line[7]
+					strand=split_line[8]
+					qName=split_line[9] 
+					qSize=split_line[10] 
+					qStart=split_line[11] 
+					qEnd=split_line[12] 
+					tName=split_line[13] 
+					tSize=split_line[14]
+					tStart=split_line[15]
+					tEnd=split_line[16]
 					#gtf format: seqname, source, feature, start, end, score, strand, frame, attribute (with semicolon separated stuff)
-					attributes=""
+					attributes=qName+";"+qSize
 					if misMatches =="0":
 						perc_ident="100"
 					else:
@@ -71,6 +88,8 @@ def main():
 			
 		outfile.close()
 	blat_output.close()
+	print('fasta-to-gtf.py Says:     Finished. removing temporary files...')
+	subprocess.call(['rm','temp_output.psl'])
 if __name__ == "__main__":
 	main()
     
