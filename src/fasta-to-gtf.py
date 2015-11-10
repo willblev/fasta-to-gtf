@@ -43,12 +43,12 @@ def main():
 		print('fasta-to-gtf.py Says:     All three fields -g -a -o must be specified...')
 		sys.exit()
 
-	blat_command = "blat %s %s temp_output.psl -t=dna -q=dna -tileSize=11 -minIdentity=95 -maxIntron=1001 -out=psl" % (genome, assembly)
+	blat_command = "blat %s %s temp_output.psl -t=dna -q=dna -tileSize=11 -minIdentity=90 -maxIntron=1001 -out=psl" % (genome, assembly)
 	if verbose: 
 		print("fasta-to-gtf.py Says:     Starting BLAT using transcripts from %s as queries to map to the reference genome %s ..." % (assembly,genome))
 		print("fasta-to-gtf.py Says:     Running "+blat_command)
 
-	subprocess.call(['blat', genome, assembly, 'temp_output.psl', '-t=dna','-q=dna','-tileSize=11','-minIdentity=95','-maxIntron=1001','-out=psl'])
+	subprocess.call(['blat', genome, assembly, 'temp_output.psl', '-t=dna','-q=dna','-tileSize=11','-minIdentity=90','-maxIntron=1001','-out=psl'])
 	if verbose:
 		print('fasta-to-gtf.py Says:     BLAT finished; parsing output...')
 	with open('temp_output.psl','r') as blat_output:
@@ -59,37 +59,41 @@ def main():
 			for line in blat_output:
 				if line[0].isdigit():  #checks if line is header or not
 					#blast format:
-					split_line= line.split("\t")
-					matches=split_line[0]
-					misMatches=split_line[1]
-					repMatches=split_line[2] 
-					nCount=split_line[3]
-					qNumInsert=split_line[4] 
-					qBaseInsert=split_line[5] 
-					tNumInsert=split_line[6]
-					tBaseInsert=split_line[7]
-					strand=split_line[8]
-					qName=split_line[9] 
-					qSize=split_line[10] 
-					qStart=split_line[11] 
-					qEnd=split_line[12] 
-					tName=split_line[13] 
-					tSize=split_line[14]
-					tStart=split_line[15]
-					tEnd=split_line[16]
+					try:
+						split_line= line.split("\t")
+						matches=split_line[0]
+						misMatches=split_line[1]
+						repMatches=split_line[2] 
+						nCount=split_line[3]
+						qNumInsert=split_line[4] 
+						qBaseInsert=split_line[5] 
+						tNumInsert=split_line[6]
+						tBaseInsert=split_line[7]
+						strand=split_line[8]
+						qName=split_line[9] 
+						qSize=split_line[10] 
+						qStart=split_line[11] 
+						qEnd=split_line[12] 
+						tName=split_line[13] 
+						tSize=split_line[14]
+						tStart=split_line[15]
+						tEnd=split_line[16]
+					except:
+						print("Unable to convert the following line from psl to gtf:%s\n" % (line))
 					#gtf format: seqname, source, feature, start, end, score, strand, frame, attribute (with semicolon separated stuff)
 					attributes=qName+";"+qSize
 					if misMatches =="0":
 						perc_ident="100"
 					else:
-						perc_ident=str(100-(int(misMatches)/(int(matches)+int(misMatches))))
-
+						perc_ident=str(100*int(matches)/(int(misMatches)+int(matches)))
+					
 					outfile.write("%s\t%s\t%s\t%s\t%s\t%s\t%s\t%s\n" % (tName, "BLAT\ttranscript", tStart, tEnd, perc_ident, strand, '0', attributes))
 			
 		outfile.close()
 	blat_output.close()
-	print('fasta-to-gtf.py Says:     Finished; removing temporary files...')
 	subprocess.call(['rm','temp_output.psl'])
+	if verbose:
+		print 'fasta-to-gtf.py Says:     Finished.'
 if __name__ == "__main__":
 	main()
     
