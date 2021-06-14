@@ -1,4 +1,9 @@
-# fasta-to-gtf
+# THIS REPO IS NOT MAINTAINED! 
+This script was something I whipped up for my own use, but decided to share in case it could help others. However, I won't be updating the code or revewing open issues, as other solutions [like GMAP](http://research-pub.gene.com/gmap/) exist which can serve the same purpose.
+
+##fasta-to-gtf
+
+
 This is a python script which uses a transcriptome assembly in fasta format to generate a gtf file (for use in genome/annotation visualization comparison). 
 
 **It takes as input:**
