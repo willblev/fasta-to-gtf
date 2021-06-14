@@ -1,5 +1,5 @@
 # THIS REPO IS NOT MAINTAINED! 
-This script was something I whipped up for my own use, but decided to share in case it could help others. However, I won't be updating the code or revewing open issues, as other solutions [like GMAP](http://research-pub.gene.com/gmap/) exist which can serve the same purpose.
+This script was something I whipped up for my own use, but decided to share in case it could help others. However, I won't be updating the code or revewing open issues, as other solutions [like GMAP](http://research-pub.gene.com/gmap/) exist which can serve the same purpose (taking a multifasta file, a reference genome, and outputting a GFF file).
 
 ## ~~fasta-to-gtf~~
 
