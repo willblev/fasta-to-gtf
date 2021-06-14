@@ -10,7 +10,7 @@ This script was something I whipped up for my own use, but decided to share in c
 
 ~~1. a de novo transcriptome assembly [fasta format]~~
 
-~~2. a reference genome [fasta format] ~~
+~~2. a reference genome [fasta format]~~
 
 ~~**It outputs a gtf file (tab separated columns) with the following fields:**~~
 
