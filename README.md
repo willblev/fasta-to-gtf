@@ -1,7 +1,12 @@
+
 # THIS REPO IS NOT MAINTAINED! 
+
 This script was something I whipped up for my own use, but decided to share in case it could help others. However, I won't be updating the code or revewing open issues, as other solutions [like GMAP](http://research-pub.gene.com/gmap/) exist which can serve the same purpose (taking a multifasta file, a reference genome, and outputting a GFF file).
 
-## ~~fasta-to-gtf~~
+\
+\'
+\'
+\'sta-to-gtf~~
 
 
 ~~This is a python script which uses a transcriptome assembly in fasta format to generate a gtf file (for use in genome/annotation visualization comparison).~~
@@ -19,7 +24,7 @@ This script was something I whipped up for my own use, but decided to share in c
 ~~2. source - name of the program that generated this feature, or the data source (database or project name)~~
 
 ~~3. feature - feature type name, e.g. Gene, Variation, Similarity~~
-
+/?.;.';,
 ~~4. start - Start position of the feature, with sequence numbering starting at 1.~~
 
 ~~5. end - End position of the feature, with sequence numbering starting at 1.~~
